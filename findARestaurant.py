@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import json
 import httplib2
 
@@ -7,68 +6,82 @@ import codecs
 sys.stdout = codecs.getwriter('utf8')(sys.stdout)
 sys.stderr = codecs.getwriter('utf8')(sys.stderr)
 
-foursquare_client_id = 'SMQNYZFVCIOYIRAIXND2D5SYBLQUOPDB4HZTV13TT22AGACD'
-foursquare_client_secret = 'IHBS4VBHYWJL53NLIY2HSVI5A1144GJ3MDTYYY1KLKTMC4BV'
-google_api_key = 'AIzaSyBz7r2Kz6x7wO1zV9_O5Rcxmt8NahJ6kos'
+foursquare_client_id = "HBTOFBMQOZZMJJWEY1YEDGEPJNPAEIC0DRQRWGA5SLGO3RL3"
+foursquare_client_secret = "########"
+
+curdate = '20181023'
 
 def getGeocodeLocation(inputString):
-    #Replace Spaces with '+' in URL
+    # Use Google Maps to convert a location into Latitute/Longitute coordinates
+    # FORMAT: https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=API_KEY
+    google_api_key = "##########"
     locationString = inputString.replace(" ", "+")
     url = ('https://maps.googleapis.com/maps/api/geocode/json?address=%s&key=%s'% (locationString, google_api_key))
     h = httplib2.Http()
     result = json.loads(h.request(url,'GET')[1])
-    #print response
     latitude = result['results'][0]['geometry']['location']['lat']
     longitude = result['results'][0]['geometry']['location']['lng']
     return (latitude,longitude)
 
-#This function takes in a string representation of a location and cuisine type, geocodes the location, and then pass in the latitude and longitude coordinates to the Foursquare API
-def findARestaurant(mealType, location):
-    latitude, longitude = getGeocodeLocation(location)
-    url = ('https://api.foursquare.com/v2/venues/search?client_id=%s&client_secret=%s&v=20130815&ll=%s,%s&query=%s' % (foursquare_client_id, foursquare_client_secret,latitude,longitude,mealType))
+def findARestaurant(mealType,location):
+    print ("mealType=%s" % (mealType))
+    print ("location=%s" % (location))
+	#1. Use getGeocodeLocation to get the latitude and longitude coordinates of the location string.
+    latlong = getGeocodeLocation(location)
+    latitude=('{:3.2f}'.format(latlong[0]))
+    longitude=('{:3.2f}'.format(latlong[1]))
+    latlong = ("%s,%s" % (latitude, longitude))
+    #2.  Use foursquare API to find a nearby restaurant with the latitude, longitude, and mealType strings.
+    url = ('https://api.foursquare.com/v2/venues/search?client_id=%s&client_secret=%s&v=%s&ll=%s&query=%s'% (foursquare_client_id, foursquare_client_secret, curdate, latlong, mealType))
     h = httplib2.Http()
     result = json.loads(h.request(url,'GET')[1])
     if result['response']['venues']:
-        #Grab the first restaurant
-        restaurant = result['response']['venues'][0]
-        venue_id = restaurant['id'] 
-        restaurant_name = restaurant['name']
-        restaurant_address = restaurant['location']['formattedAddress']
-        #Format the Restaurant Address into one string
-        address = ""
-        for i in restaurant_address:
-            address += i + " "
-        restaurant_address = address
-        
-        #Get a  300x300 picture of the restaurant using the venue_id (you can change this by altering the 300x300 value in the URL or replacing it with 'orginal' to get the original picture
-        url = ('https://api.foursquare.com/v2/venues/%s/photos?client_id=%s&v=20150603&client_secret=%s' % ((venue_id,foursquare_client_id,foursquare_client_secret)))
+        #3. Grab the first restaurant
+        name = result['response']['venues'][0]['name']
+        venue_id = result['response']['venues'][0]['id']
+        addrLine = ""
+        for i in result['response']['venues'][0]['location']['formattedAddress']:
+            addrLine += i
+            addrLine += " "
+	    #4. Get a  300x300 picture of the restaurant using the venue_id (you can change this by altering the 300x300 value in the URL or replacing it with 'orginal' to get the original picture        
+        url = ('https://api.foursquare.com/v2/venues/%s/photos/?client_id=%s&client_secret=%s&v=%s'% (venue_id, foursquare_client_id, foursquare_client_secret, curdate))
+        h = httplib2.Http()
         result = json.loads(h.request(url,'GET')[1])
-        #Grab the first image
-        #if no image available, insert default image url
-        if result['response']['photos']['items']:
-            firstpic = result['response']['photos']['items'][0]
-            prefix = firstpic['prefix']
-            suffix = firstpic['suffix']
-            imageURL = prefix + "300x300" + suffix
+        #5. Grab the first image
+        imageURL = ""
+        if result['meta']['code'] == 200:
+            if result['response']['photos']['count'] > 0:
+                imageURL += result['response']['photos']['items'][0]['prefix']
+                imageURL += "300x300"
+                imageURL += result['response']['photos']['items'][0]['suffix']
+            else:
+                #6. If no image is available, insert default a image url
+                imageURL = "https://pixabay.com/en/restaurant-wine-glasses-served-449952/"
         else:
-            imageURL = "http://pixabay.com/get/8926af5eb597ca51ca4c/1433440765/cheeseburger-34314_1280.png?direct"
-
-        restaurantInfo = {'name':restaurant_name, 'address':restaurant_address, 'image':imageURL}
-        #print "Restaurant Name: %s " % restaurantInfo['name']
-        #print "Restaurant Address: %s " % restaurantInfo['address']
-        #print "Image: %s \n " % restaurantInfo['image']
-        return restaurantInfo
-    else:
-        #print "No Restaurants Found for %s" % location
-        return "No Restaurants Found"
+            imageURL = "https://pixabay.com/en/restaurant-wine-glasses-served-449952/"
+        #7. Return a dictionary containing the restaurant name, address, and image url	
+        dict = {'name':name, 'address':addrLine, 'image':imageURL}
+        return dict
+    else: 
+        return None
     
+def PrintInfo(d):
+    if d:
+        print ("Restaurant Name: %s" % (d['name']))
+        print ("Restaurant Address: %s" % (d['address']))
+        print ("Imaage: %s" % (d['imageurl']))
+        print 
+    else:
+        print ("No restaurants found")
+    return
+
 if __name__ == '__main__':
-    findARestaurant("Pizza", "Tokyo, Japan")
-    findARestaurant("Tacos", "Jakarta, Indonesia")
-    findARestaurant("Tapas", "Maputo, Mozambique")
-    findARestaurant("Falafel", "Cairo, Egypt")
-    findARestaurant("Spaghetti", "New Delhi, India")
-    findARestaurant("Cappuccino", "Geneva, Switzerland") 
-    findARestaurant("Sushi", "Los Angeles, California")
-    findARestaurant("Steak", "La Paz, Bolivia")
-    findARestaurant("Gyros", "Sydney Austrailia")
+    print(findARestaurant("Pizza", "Tokyo, Japan"))
+    print(findARestaurant("Tacos", "Jakarta, Indonesia"))
+    print(findARestaurant("Tapas", "Maputo, Mozambique"))
+    print(findARestaurant("Falafel", "Cairo, Egypt"))
+    print(findARestaurant("Spaghetti", "New Delhi, India"))
+    print(findARestaurant("Cappuccino", "Geneva, Switzerland"))
+    print(findARestaurant("Sushi", "Los Angeles, California"))
+    print(findARestaurant("Steak", "La Paz, Bolivia"))
+    print(findARestaurant("Gyros", "Sydney Australia"))
