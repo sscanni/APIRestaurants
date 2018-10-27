@@ -1,3 +1,4 @@
+from getAPIKeyPackage.getAPIKeys import getAPIKey
 import json
 import httplib2
 
@@ -6,15 +7,18 @@ import codecs
 sys.stdout = codecs.getwriter('utf8')(sys.stdout)
 sys.stderr = codecs.getwriter('utf8')(sys.stderr)
 
-foursquare_client_id = "HBTOFBMQOZZMJJWEY1YEDGEPJNPAEIC0DRQRWGA5SLGO3RL3"
-foursquare_client_secret = "########"
+# Read the google_api_key from a local database
+google_api_key = getAPIKey("Google", "GeocodeLocation", "google_api_key")
+
+# Read the client_id and client_secret from a local database
+foursquare_client_id = getAPIKey("Foursquare", "Foursquare", "client_id")
+foursquare_client_secret = getAPIKey("Foursquare", "Foursquare", "client_secret")
 
 curdate = '20181023'
 
 def getGeocodeLocation(inputString):
     # Use Google Maps to convert a location into Latitute/Longitute coordinates
     # FORMAT: https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=API_KEY
-    google_api_key = "##########"
     locationString = inputString.replace(" ", "+")
     url = ('https://maps.googleapis.com/maps/api/geocode/json?address=%s&key=%s'% (locationString, google_api_key))
     h = httplib2.Http()
