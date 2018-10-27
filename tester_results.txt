@@ -1,0 +1,57 @@
+Running Endpoint Tester....
+
+Test 1: Creating new Restaurants......
+{u'restaurant': {u'restaurant_address': u'Suipacha 517 (e/ Lavalle y Tucum\xe1n) 1008AAK Buenos Aires Buenos Aires C.F. Argentina ', u'id': 1, u'restaurant_name': u'Suiren Sushi Express', u'restaurant_image': u'https://fastly.4sqi.net/img/general/300x300/9086923_zYhqkrsUN1L6sIkCG1TT1rFSE7LM17NQtilrN8kQMwA.jpg'}}
+{u'restaurant': {u'restaurant_address': u'303 16th St Ste 130 (Court St.) Denver, CO 80202 United States ', u'id': 2, u'restaurant_name': u'Duck Soup', u'restaurant_image': u'https://fastly.4sqi.net/img/general/300x300/3672204_7YLQy2OPvXmr9n0i1eihfbDEwWjvu3FBopxkGL780Ic.jpg'}}
+{u'restaurant': {u'restaurant_address': u'T\xfdnsk\xe1 Praha \u010cesk\xe1 republika ', u'id': 3, u'restaurant_name': u'Cr\u011bpes Royales', u'restaurant_image': u'https://pixabay.com/en/restaurant-wine-glasses-served-449952/'}}
+{u'restaurant': {u'restaurant_address': u"268 Xizang Rd | \u897f\u85cf\u4e2d\u8def268\u53f7 (B1/F Raffles City | \u6765\u798f\u58eb\u5e7f\u573a), People's SQ Huangpu \u4e0a\u6d77\u5e02, 200085 \u4e2d\u56fd ", u'id': 4, u'restaurant_name': u'Subway (\u8d5b\u767e\u5473)', u'restaurant_image': u'https://pixabay.com/en/restaurant-wine-glasses-served-449952/'}}
+{u'restaurant': {u'restaurant_address': u'Nairobi Kenya ', u'id': 5, u'restaurant_name': u"Pepino's Pizza", u'restaurant_image': u'https://fastly.4sqi.net/img/general/300x300/47942924_gcZQsuajVJh_pBT37uhs2OyJD_fQkSGcQVl-nF5k0A4.jpg'}}
+Test 1 PASS: Succesfully Made all new restaurants
+Attempting Test 2: Reading all Restaurants...
+{
+  "restaurants": [
+    {
+      "id": 1, 
+      "restaurant_address": "Suipacha 517 (e/ Lavalle y Tucum\u00e1n) 1008AAK Buenos Aires Buenos Aires C.F. Argentina ", 
+      "restaurant_image": "https://fastly.4sqi.net/img/general/300x300/9086923_zYhqkrsUN1L6sIkCG1TT1rFSE7LM17NQtilrN8kQMwA.jpg", 
+      "restaurant_name": "Suiren Sushi Express"
+    }, 
+    {
+      "id": 2, 
+      "restaurant_address": "303 16th St Ste 130 (Court St.) Denver, CO 80202 United States ", 
+      "restaurant_image": "https://fastly.4sqi.net/img/general/300x300/3672204_7YLQy2OPvXmr9n0i1eihfbDEwWjvu3FBopxkGL780Ic.jpg", 
+      "restaurant_name": "Duck Soup"
+    }, 
+    {
+      "id": 3, 
+      "restaurant_address": "T\u00fdnsk\u00e1 Praha \u010cesk\u00e1 republika ", 
+      "restaurant_image": "https://pixabay.com/en/restaurant-wine-glasses-served-449952/", 
+      "restaurant_name": "Cr\u011bpes Royales"
+    }, 
+    {
+      "id": 4, 
+      "restaurant_address": "268 Xizang Rd | \u897f\u85cf\u4e2d\u8def268\u53f7 (B1/F Raffles City | \u6765\u798f\u58eb\u5e7f\u573a), People's SQ Huangpu \u4e0a\u6d77\u5e02, 200085 \u4e2d\u56fd ", 
+      "restaurant_image": "https://pixabay.com/en/restaurant-wine-glasses-served-449952/", 
+      "restaurant_name": "Subway (\u8d5b\u767e\u5473)"
+    }, 
+    {
+      "id": 5, 
+      "restaurant_address": "Nairobi Kenya ", 
+      "restaurant_image": "https://fastly.4sqi.net/img/general/300x300/47942924_gcZQsuajVJh_pBT37uhs2OyJD_fQkSGcQVl-nF5k0A4.jpg", 
+      "restaurant_name": "Pepino's Pizza"
+    }
+  ]
+}
+
+Test 2 PASS: Succesfully read all restaurants
+Test# 3
+Attempting Test 3: Reading the last created restaurant...
+{u'restaurant': {u'restaurant_address': u'Nairobi Kenya ', u'id': 5, u'restaurant_name': u"Pepino's Pizza", u'restaurant_image': u'https://fastly.4sqi.net/img/general/300x300/47942924_gcZQsuajVJh_pBT37uhs2OyJD_fQkSGcQVl-nF5k0A4.jpg'}}
+Test 3 PASS: Succesfully read last restaurant
+Attempting Test 4: Changing the name, image, and address of the first restaurant to Udacity...
+{u'restaurant': {u'restaurant_address': u'2465 Latham Street Mountain View CA', u'id': 1, u'restaurant_name': u'Udacity', u'restaurant_image': u'https://media.glassdoor.com/l/70/82/fc/e8/students-first.jpg'}}
+Test 4 PASS: Succesfully updated first restaurant
+Attempting Test 5: Deleteing the second restaurant from the server...
+Removed Restaurant with id 2
+Test 5 PASS: Succesfully updated first restaurant
+ALL TESTS PASSED!

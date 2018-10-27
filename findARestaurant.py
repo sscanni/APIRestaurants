@@ -17,6 +17,8 @@ foursquare_client_secret = getAPIKey("Foursquare", "Foursquare", "client_secret"
 curdate = '20181023'
 
 def getGeocodeLocation(inputString):
+    # print ("inputString=%s" % (inputString))
+    # print ("google_api_key=%s" % (google_api_key))
     # Use Google Maps to convert a location into Latitute/Longitute coordinates
     # FORMAT: https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=API_KEY
     locationString = inputString.replace(" ", "+")
@@ -28,15 +30,17 @@ def getGeocodeLocation(inputString):
     return (latitude,longitude)
 
 def findARestaurant(mealType,location):
-    print ("mealType=%s" % (mealType))
-    print ("location=%s" % (location))
+    # print ("mealType=%s" % (mealType))
+    # print ("location=%s" % (location))
 	#1. Use getGeocodeLocation to get the latitude and longitude coordinates of the location string.
     latlong = getGeocodeLocation(location)
     latitude=('{:3.2f}'.format(latlong[0]))
     longitude=('{:3.2f}'.format(latlong[1]))
     latlong = ("%s,%s" % (latitude, longitude))
+    # print ("latlong=%s" % (latlong))
     #2.  Use foursquare API to find a nearby restaurant with the latitude, longitude, and mealType strings.
     url = ('https://api.foursquare.com/v2/venues/search?client_id=%s&client_secret=%s&v=%s&ll=%s&query=%s'% (foursquare_client_id, foursquare_client_secret, curdate, latlong, mealType))
+    # print ("url=%s" % (url))
     h = httplib2.Http()
     result = json.loads(h.request(url,'GET')[1])
     if result['response']['venues']:
@@ -65,6 +69,7 @@ def findARestaurant(mealType,location):
             imageURL = "https://pixabay.com/en/restaurant-wine-glasses-served-449952/"
         #7. Return a dictionary containing the restaurant name, address, and image url	
         dict = {'name':name, 'address':addrLine, 'image':imageURL}
+        #print ("dict=%s" % (dict))
         return dict
     else: 
         return None
